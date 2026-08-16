@@ -1,18 +1,36 @@
 {
-  "name": "rejection-check",
+  "name": "dsh-rejection-check",
   "version": "1.0.0",
-  "description": "",
+  "description": "标书废标项检查工具（DeepSeek Harness 插件）：解析招标/投标文件，提取无效投标与废标项，三轮风险检查，错别字与逻辑谬误检查，生成 PDF/HTML/Markdown 检查报告。无需外部 API Key。",
+  "type": "module",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
+  "files": [
+    "index.js",
+    "cordis.patch.yml",
+    "SKILL.md",
+    "scripts",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "plugin",
+    "bundle",
+    "skill",
+    "tender",
+    "bid",
+    "rejection-check"
+  ],
+  "license": "MIT",
   "dependencies": {
     "mammoth": "^1.12.1",
     "pdf-parse": "^2.4.5",
     "pdfkit": "^0.19.1"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
   }
 }

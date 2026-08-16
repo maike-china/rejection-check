@@ -3,9 +3,3 @@ package-lock.json
 *.pdf
 *.html
 /tmp/
-
-# 排除生成的报告文件，但保留技能核心 .md 文件
-# （README.md 和 SKILL.md 通过 ! 规则保留）
-*.md
-!README.md
-!SKILL.md

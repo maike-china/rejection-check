@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18, 20, 22]
+        node-version: [20, 22]
 
     steps:
       - uses: actions/checkout@v4
@@ -23,12 +23,46 @@ jobs:
           cache: 'npm'
 
       - name: 安装依赖
-        run: npm ci
+        run: npm install
 
-      - name: 检查脚本语法
+      - name: 检查插件入口语法
         run: |
+          node --check index.js
           node --check scripts/parse.mjs
           node --check scripts/report.mjs
+
+      - name: 校验 bundle manifest 与 patch 层
+        run: |
+          node -e "
+            const p = require('./package.json');
+            if (!p.dsh || !p.dsh.bundle || !p.dsh.bundle.patch) {
+              console.error('缺少 dsh.bundle.patch 声明');
+              process.exit(1);
+            }
+            if (p.type !== 'module') {
+              console.error('插件必须为 ESM（type: module）');
+              process.exit(1);
+            }
+            const fs = require('node:fs');
+            if (!fs.existsSync(p.dsh.bundle.patch)) {
+              console.error('cordis.patch.yml 不存在');
+              process.exit(1);
+            }
+            if (!fs.existsSync(p.main || 'index.js')) {
+              console.error('main 入口不存在');
+              process.exit(1);
+            }
+            console.log('bundle manifest ✓ (' + p.name + ' → ' + p.dsh.bundle.patch + ')');
+          "
+
+      - name: 测试插件入口可加载
+        run: |
+          node -e "
+            import('./index.js').then((m) => {
+              if (typeof m.apply !== 'function') { console.error('缺少 apply()'); process.exit(1); }
+              console.log('index.js 可加载 ✓ (name=' + m.name + ', inject=' + JSON.stringify(m.inject) + ')');
+            });
+          "
 
       - name: 测试文档解析（docx）
         run: |
@@ -49,7 +83,3 @@ jobs:
             console.log('HTML 生成 ✓ (' + html.length + ' 字符)');
             console.log('Markdown 生成 ✓ (' + md.length + ' 字符)');
           "
-
-      - name: 检查 package.json 有效性
-        run: |
-          node -e "const p = require('./package.json'); console.log('package.json ✓ (' + p.name + ')');"

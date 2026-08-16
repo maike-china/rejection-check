@@ -1,0 +1,14 @@
+# dsh-rejection-check bundle patch.
+#
+# This layer is applied when a profile lists this bundle (see
+# dsh.profile.bundles in the profile's package.json, maintained by
+# `dsh plugin --profile <name> add ./rejection-check1`).
+#
+# It inserts one row enabling the plugin: the row name is the npm package
+# name so Node module resolution finds the installed bundle code, and the
+# plugin's apply() registers the bundled 废标项检查 skill (SKILL.md +
+# scripts/) into the harness skill registry at startup.
+
+- insert:
+    - id: rejection-check
+      name: 'dsh-rejection-check'
