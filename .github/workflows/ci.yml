@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 使用 Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 检查脚本语法
+        run: |
+          node --check scripts/parse.mjs
+          node --check scripts/report.mjs
+
+      - name: 测试文档解析（docx）
+        run: |
+          echo "测试解析器可用性..."
+          node -e "
+            const m = require('mammoth');
+            console.log('mammoth 可用 ✓');
+          "
+
+      - name: 测试报告生成模块
+        run: |
+          node -e "
+            const { buildHtml, buildMarkdown } = await import('./scripts/report.mjs');
+            const meta = { title: '测试报告', generatedAt: '2026-01-01', tender: '招标文件', bids: '投标文件' };
+            const results = { rejection: [], typo: [], logic: [] };
+            const html = buildHtml(meta, results);
+            const md = buildMarkdown(meta, results);
+            console.log('HTML 生成 ✓ (' + html.length + ' 字符)');
+            console.log('Markdown 生成 ✓ (' + md.length + ' 字符)');
+          "
+
+      - name: 检查 package.json 有效性
+        run: |
+          node -e "const p = require('./package.json'); console.log('package.json ✓ (' + p.name + ')');"
