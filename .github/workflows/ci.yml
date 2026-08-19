@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20, 22]
+        node-version: [22, 24]
 
     steps:
       - uses: actions/checkout@v4
@@ -20,7 +20,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
 
       - name: 安装依赖
         run: npm install
@@ -74,7 +73,7 @@ jobs:
 
       - name: 测试报告生成模块
         run: |
-          node -e "
+          node --input-type=module -e "
             const { buildHtml, buildMarkdown } = await import('./scripts/report.mjs');
             const meta = { title: '测试报告', generatedAt: '2026-01-01', tender: '招标文件', bids: '投标文件' };
             const results = { rejection: [], typo: [], logic: [] };
