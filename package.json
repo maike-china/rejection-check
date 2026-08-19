@@ -1,6 +1,6 @@
 {
   "name": "dsh-rejection-check",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "标书废标项检查工具（DeepSeek Harness 插件）：解析招标/投标文件，提取无效投标与废标项，三轮风险检查，错别字与逻辑谬误检查，生成 PDF/HTML/Markdown 检查报告。无需外部 API Key。",
   "type": "module",
   "main": "index.js",
@@ -10,6 +10,7 @@
     "SKILL.md",
     "scripts",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "keywords": [
